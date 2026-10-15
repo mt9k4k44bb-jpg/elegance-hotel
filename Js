@@ -1,0 +1,66 @@
+
+const toggle = document.querySelector('.menu-toggle');
+const nav = document.querySelector('#main-nav');
+const form = document.querySelector('#booking-form');
+const message = document.querySelector('#form-message');
+const dateInput = document.querySelector('#booking-date');
+const year = document.querySelector('#year');
+
+// Mobile navigation
+if (toggle && nav) {
+  toggle.addEventListener('click', () => {
+    const open = nav.classList.toggle('open');
+    toggle.setAttribute('aria-expanded', String(open));
+    toggle.textContent = open ? '✕ Close' : '☰ Menu';
+  });
+
+  nav.querySelectorAll('a').forEach(link => {
+    link.addEventListener('click', () => {
+      nav.classList.remove('open');
+      toggle.setAttribute('aria-expanded', 'false');
+      toggle.textContent = '☰ Menu';
+    });
+  });
+}
+
+// Set the footer year
+if (year) {
+  year.textContent = new Date().getFullYear();
+}
+
+// Prevent selecting a past date
+if (dateInput) {
+  const today = new Date();
+  const localToday = new Date(
+    today.getTime() - today.getTimezoneOffset() * 60000
+  ).toISOString().split('T')[0];
+
+  dateInput.min = localToday;
+}
+
+// Demo reservation form
+if (form && message) {
+  form.addEventListener('submit', event => {
+    event.preventDefault();
+
+    if (!form.checkValidity()) {
+      form.reportValidity();
+      return;
+    }
+
+    const name = document.querySelector('#guest-name').value.trim();
+    const experience = document.querySelector('#booking-type').value;
+
+    message.textContent =
+      `Thank you, ${name}! Your ${experience.toLowerCase()} request is ready. ` +
+      'This is a demo; no reservation has been sent.';
+
+    form.reset();
+
+    if (dateInput) {
+      dateInput.min = new Date(
+        Date.now() - new Date().getTimezoneOffset() * 60000
+      ).toISOString().split('T')[0];
+    }
+  });
+}
